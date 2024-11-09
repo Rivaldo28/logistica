@@ -12,21 +12,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    services:
-      postgres:
-        image: postgres:12
-        env:
-          POSTGRES_DB: mydatabase
-          POSTGRES_USER: user
-          POSTGRES_PASSWORD: password
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd "pg_isready -U user"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -41,14 +26,10 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build with Gradle
-        run: ./gradlew build || { echo 'Build failed'; exit 1; }
+        run: ./gradlew build --info || { echo 'Build failed'; exit 1; }
 
       - name: Run Tests
-        env:
-          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/mydatabase
-          SPRING_DATASOURCE_USERNAME: user
-          SPRING_DATASOURCE_PASSWORD: password
-        run: ./gradlew test || { echo 'Tests failed'; exit 1; }
+        run: ./gradlew test --info || { echo 'Tests failed'; exit 1; }
 
       - name: Package
         run: ./gradlew assemble || { echo 'Packaging failed'; exit 1; }
