@@ -26,13 +26,20 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build with Gradle
-        run: ./gradlew build
+        run: ./gradlew build || { echo 'Build failed'; exit 1; }
 
       - name: Run Tests
-        run: ./gradlew test
+        run: ./gradlew test || { echo 'Tests failed'; exit 1; }
 
       - name: Package
-        run: ./gradlew assemble
+        run: ./gradlew assemble || { echo 'Packaging failed'; exit 1; }
+
+      - name: Upload Test Results
+        if: failure()  # Apenas se os testes falharem
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-results
+          path: build/reports/tests/test/index.html
 
       - name: Deploy
         run: |
