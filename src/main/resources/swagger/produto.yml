@@ -1,0 +1,188 @@
+openapi: 3.0.3
+info:
+  title: API de Estoque
+  version: "1.0"
+  description: API para gerenciar o estoque de produtos
+
+servers:
+  - url: http://localhost:8080/api/produto
+    description: Servidor local
+  - url: https://api.exemplo.com/produto
+    description: Servidor de produção
+
+tags:
+  - name: Produtos
+    description: Recurso de gerenciamento de produtos
+
+paths:
+  /produtos:
+    get:
+      tags:
+        - Produtos
+      summary: Listar produtos
+      description: Listagem de todos os produtos baseado nos filtros fornecidos
+      operationId: listarProdutos
+      parameters:
+        - name: page
+          in: query
+          required: false
+          description: Número da página
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          required: false
+          description: Tamanho da página
+          schema:
+            type: integer
+            default: 10
+        - name: nome
+          in: query
+          required: false
+          description: Nome do produto para filtrar
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Lista de produtos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Produto'
+                  totalPages:
+                    type: integer
+                  totalElements:
+                    type: integer
+                  size:
+                    type: integer
+                  number:
+                    type: integer
+        '400':
+          description: Requisição inválida
+        '500':
+          description: Erro interno do servidor
+
+    post:
+      tags:
+        - Produtos
+      summary: Adicionar um produto
+      description: Criação de um novo produto
+      operationId: adicionarProduto
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Produto'
+      responses:
+        '201':
+          description: Produto adicionado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Produto'
+        '400':
+          description: Requisição inválida
+        '500':
+          description: Erro interno do servidor
+
+  /produtos/{id}:
+    get:
+      tags:
+        - Produtos
+      summary: Obter um produto
+      description: Obtém um produto específico com base no ID fornecido
+      operationId: obterProduto
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID do produto
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Produto encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Produto'
+        '404':
+          description: Produto não encontrado
+        '500':
+          description: Erro interno do servidor
+
+    put:
+      tags:
+        - Produtos
+      summary: Atualizar um produto
+      description: Atualização dos atributos de um produto existente com base no ID fornecido
+      operationId: atualizarProduto
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID do produto
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Produto'
+      responses:
+        '200':
+          description: Produto atualizado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Produto'
+        '400':
+          description: Requisição inválida
+        '404':
+          description: Produto não encontrado
+        '500':
+          description: Erro interno do servidor
+
+    delete:
+      tags:
+        - Produtos
+      summary: Remover um produto
+      description: Remove um produto específico com base no ID fornecido
+      operationId: removerProduto
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID do produto
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Produto removido com sucesso
+        '404':
+          description: Produto não encontrado
+        '500':
+          description: Erro interno do servidor
+
+components:
+  schemas:
+    Produto:
+      type: object
+      properties:
+        id:
+          type: integer
+        nome:
+          type: string
+        quantidade:
+          type: integer
+      required:
+        - nome
+        - quantidade

@@ -1,0 +1,95 @@
+plugins {
+	id 'java'
+	id 'idea'
+	id 'jacoco'
+	id 'org.springframework.boot' version '3.3.4'
+	id 'io.spring.dependency-management' version '1.1.6'
+	id 'org.sonarqube' version '5.1.0.4882'
+	id 'application' // Para permitir execução da aplicação
+	id 'org.openapi.generator' version '7.2.0'
+}
+
+group = 'com.grandle'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21) // Utilizando Java 21
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation platform('org.springframework.boot:spring-boot-dependencies:3.3.4')
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
+	implementation 'org.openapitools:jackson-databind-nullable:0.2.6'
+//	implementation 'org.springdoc:springdoc-openapi-ui:1.6.14'
+	implementation 'org.keycloak:keycloak-spring-boot-starter:25.0.3'
+	implementation 'io.micrometer:micrometer-registry-prometheus'
+	implementation 'org.flywaydb:flyway-core'
+	implementation 'org.flywaydb:flyway-database-postgresql'
+
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+//	developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
+	implementation 'org.postgresql:postgresql'
+
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.amqp:spring-rabbit-test'
+	testImplementation 'org.springframework.security:spring-security-test'
+	testImplementation 'org.mockito:mockito-core'
+	testImplementation 'org.mockito:mockito-junit-jupiter'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	implementation 'org.hibernate:hibernate-core:6.6.1.Final'
+	annotationProcessor 'org.hibernate.orm:hibernate-jpamodelgen:6.6.1.Final'
+
+	implementation 'com.amazonaws:aws-java-sdk-s3:1.12.710'
+}
+
+// Configuração para testes
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+// Forçar versões de dependências (opcional)
+configurations.all {
+	resolutionStrategy {
+		force 'org.springframework.boot:spring-boot-starter:3.3.5'
+		force 'org.springdoc:springdoc-openapi-ui:1.6.14'
+	}
+}
+
+// Definindo a classe principal para o plugin de aplicação
+application {
+	mainClass = 'com.grandle.LogisticaApplication' // Altere para o nome da sua classe principal
+}
+
+// Tarefa para limpar e construir o projeto
+task cleanBuild {
+	doLast {
+		println 'Cleaning and building the project...'
+	}
+}
+
+openApiGenerate {
+	generatorName = "spring"
+	inputSpec = "$rootDir/src/main/resources/produto.yaml" // Caminho para o seu arquivo OpenAPI
+	outputDir = "$buildDir/generated" // Diretório onde o código será gerado
+	apiPackage = "com.grandle.logistica.estoque.api" // Pacote para as APIs geradas
+	modelPackage = "com.grandle.logistica.estoque.domain.entities" // Pacote para os modelos
+	invokerPackage = "com.grandle.logistica.estoque" // Pacote do invocador
+	configOptions = [
+			interfaceOnly: "true", // Gera apenas interfaces
+			dateLibrary: "java8" // Configuração da biblioteca de data
+	]
+}
+
