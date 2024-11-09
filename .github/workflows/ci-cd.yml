@@ -3,7 +3,7 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - main  # Ou a branch que você deseja monitorar
+      - main
   pull_request:
     branches:
       - main
@@ -11,6 +11,21 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:13
+        env:
+          POSTGRES_DB: mydatabase
+          POSTGRES_USER: user
+          POSTGRES_PASSWORD: password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U user"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
       - name: Checkout code
@@ -29,14 +44,18 @@ jobs:
         run: ./gradlew build || { echo 'Build failed'; exit 1; }
 
       - name: Run Tests
+        env:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/mydatabase
+          SPRING_DATASOURCE_USERNAME: user
+          SPRING_DATASOURCE_PASSWORD: password
         run: ./gradlew test || { echo 'Tests failed'; exit 1; }
 
       - name: Package
         run: ./gradlew assemble || { echo 'Packaging failed'; exit 1; }
 
       - name: Upload Test Results
-        if: failure()  # Apenas se os testes falharem
-        uses: actions/upload-artifact@v4  # Atualizando para a versão 4
+        if: failure()
+        uses: actions/upload-artifact@v4
         with:
           name: test-results
           path: build/reports/tests/test/index.html
