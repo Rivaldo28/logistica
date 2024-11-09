@@ -36,7 +36,7 @@ jobs:
 
       - name: Upload Test Results
         if: failure()  # Apenas se os testes falharem
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4  # Atualizando para a versão 4
         with:
           name: test-results
           path: build/reports/tests/test/index.html
