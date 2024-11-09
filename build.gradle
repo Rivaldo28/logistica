@@ -52,7 +52,7 @@ dependencies {
 	implementation 'org.hibernate:hibernate-core:6.6.1.Final'
 	annotationProcessor 'org.hibernate.orm:hibernate-jpamodelgen:6.6.1.Final'
 
-	implementation 'com.amazonaws:aws-java-sdk-s3:1.12.710'
+//	implementation 'com.amazonaws:aws-java-sdk-s3:1.12.710'
 }
 
 // Configuração para testes
@@ -80,16 +80,16 @@ task cleanBuild {
 	}
 }
 
-openApiGenerate {
-	generatorName = "spring"
-	inputSpec = "$rootDir/src/main/resources/produto.yaml" // Caminho para o seu arquivo OpenAPI
-	outputDir = "$buildDir/generated" // Diretório onde o código será gerado
-	apiPackage = "com.grandle.logistica.estoque.api" // Pacote para as APIs geradas
-	modelPackage = "com.grandle.logistica.estoque.domain.entities" // Pacote para os modelos
-	invokerPackage = "com.grandle.logistica.estoque" // Pacote do invocador
-	configOptions = [
-			interfaceOnly: "true", // Gera apenas interfaces
-			dateLibrary: "java8" // Configuração da biblioteca de data
-	]
-}
+//openApiGenerate {
+//	generatorName = "spring"
+//	inputSpec = "$rootDir/src/main/resources/produto.yaml" // Caminho para o seu arquivo OpenAPI
+//	outputDir = "$buildDir/generated" // Diretório onde o código será gerado
+//	apiPackage = "com.grandle.logistica.estoque.api" // Pacote para as APIs geradas
+//	modelPackage = "com.grandle.logistica.estoque.domain.entities" // Pacote para os modelos
+//	invokerPackage = "com.grandle.logistica.estoque" // Pacote do invocador
+//	configOptions = [
+//			interfaceOnly: "true", // Gera apenas interfaces
+//			dateLibrary: "java8" // Configuração da biblioteca de data
+//	]
+//}
 
