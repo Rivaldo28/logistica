@@ -14,7 +14,7 @@ jobs:
 
     services:
       postgres:
-        image: postgres:13
+        image: postgres:12  # Alterado para PostgreSQL 12
         env:
           POSTGRES_DB: mydatabase
           POSTGRES_USER: user
